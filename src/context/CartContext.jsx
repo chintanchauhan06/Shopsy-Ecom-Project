@@ -1,54 +1,67 @@
 import { createContext, useContext, useState } from "react";
 import { toast } from "react-toastify";
 
-export const CartContext = createContext(null)
+export const CartContext = createContext(null);
 
 export const CartProvider = ({ children }) => {
-    const [cartItem, setCartItem] = useState([])
+  const [cartItem, setCartItem] = useState([]);
 
-    const addToCart = (product) => {
-        const itemInCart = cartItem.find((item) => item.id === product.id)
-        if (itemInCart) {
-            // Increase quantity if already in cart
-            const updatedCart = cartItem.map((item) =>
-                item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-            );
-            setCartItem(updatedCart)
-            toast.success("Product quantity increased!")
-        } else {
-            //Add new ietm with quantity 1
-            setCartItem([...cartItem, { ...product, quantity: 1 }])
-            toast.success("Product is added to cart!")
+  // ✅ ADD TO CART
+  const addToCart = (product) => {
+    setCartItem((prev) => {
+      const exist = prev.find((item) => item.id === product.id);
 
-        }
-    }
+      if (exist) {
+        toast.success("Quantity increased!");
+        return prev.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
 
-    const updateQuantity = (cartItem, productId, action) => {
-        setCartItem(cartItem.map(item => {
-            if (item.id === productId) {
-                let newUnit = item.quantity;
-                if (action === "increase") {
-                    newUnit = newUnit + 1
-                    toast.success("Quantity is increased!")
-                } else if (action === "decrease") {
-                    newUnit = newUnit - 1
-                    toast.success("Quantity is decreased!")
-                }
-                return newUnit > 0 ? { ...item, quantity: newUnit } : null
-            }
-            return item;
-        }).filter(item => item != null) // remove item qunatity 0
-        )
-    }
+      toast.success("Added to cart!");
+      return [...prev, { ...product, quantity: 1 }];
+    });
+  };
 
-    const deleteItem = (productId) => {
-        setCartItem(cartItem.filter(item => item.id !== productId))
-        toast.success("Product is deleted from cart!")
-    }
+  // ✅ UPDATE QUANTITY
+  const updateQuantity = (id, action) => {
+    setCartItem((prev) =>
+      prev
+        .map((item) => {
+          if (item.id === id) {
+            let qty = item.quantity;
 
-    return <CartContext.Provider value={{ cartItem, setCartItem, addToCart, updateQuantity, deleteItem }}>
-        {children}
+            if (action === "increase") qty++;
+            if (action === "decrease") qty--;
+
+            return qty > 0 ? { ...item, quantity: qty } : null;
+          }
+          return item;
+        })
+        .filter(Boolean)
+    );
+  };
+
+  // ✅ DELETE ITEM
+  const deleteItem = (id) => {
+    setCartItem((prev) => prev.filter((item) => item.id !== id));
+    toast.success("Item removed!");
+  };
+
+  return (
+    <CartContext.Provider
+      value={{
+        cartItem,
+        addToCart,
+        updateQuantity,
+        deleteItem,
+      }}
+    >
+      {children}
     </CartContext.Provider>
-}
+  );
+};
 
-export const useCart = () => useContext(CartContext)
+export const useCart = () => useContext(CartContext);

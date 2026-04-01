@@ -1,40 +1,36 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Carousel from "../components/Carousel";
 import MidBanner from "../components/MidBanner";
 import Features from "../components/Features";
-// import HomeProducts from "../components/HomeProducts";
-
-// 🔥 small banner
-// import smallBanner from "../assets/banner/small-banner.jpg";
-import smallbanner from '../assets/small-banner.jpg'
 import HomeProducts from "../components/HomeProducts";
+import smallbanner from "../assets/small-banner.jpg";
 
 const Home = () => {
   return (
-    <div className="overflow-x-hidden">
+    <div className="bg-gray-50">
 
-      {/* 🔥 HERO */}
+      {/* HERO */}
       <Carousel />
 
-      {/* 🔥 MID BANNER */}
-      <MidBanner />
-
-      {/* 🔥 SMALL BANNER */}
-      <div className="max-w-7xl mx-auto px-4 my-10">
+      {/* SMALL PROMO */}
+      <div className="max-w-7xl mx-auto px-4 my-12">
         <img
           src={smallbanner}
           alt="offer"
-          className="w-full h-[150px] md:h-[250px] object-cover rounded-xl"
+          className="w-full h-[160px] md:h-[260px] object-cover rounded-2xl shadow-md hover:scale-[1.01] transition"
         />
       </div>
 
-      {/* 🔥 TRENDING PRODUCTS */}
+      {/* TRENDING */}
       <HomeProducts title="🔥 Trending Products" filterType="trending" />
 
-      {/* 🔥 DEALS SECTION */}
+      {/* MID BANNER */}
+      <MidBanner />
+
+      {/* DEALS */}
       <HomeProducts title="💸 Best Deals Under $100" filterType="deals" />
 
-      {/* 🔥 FEATURES */}
+      {/* FEATURES */}
       <Features />
     </div>
   );

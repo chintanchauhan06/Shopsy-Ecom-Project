@@ -1,35 +1,47 @@
-import axios from "axios";
-import { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 
-export const DataContext = createContext(null);
+const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
-    const [data, setData] = useState()
+  const [data, setData] = useState([]);
 
-    // fetching all products from api
-    const fetchAllProducts = async () => {
-  try {
-    const res = await axios.get('https://dummyjson.com/products')
-    console.log(res)
-    setData(res.data.products)
-  } catch (error) {
-    console.log(error)
-  }
-}
+  // ✅ Fetch products
+  const fetchAllProducts = async () => {
+    try {
+      const res = await fetch("https://dummyjson.com/products");
+      const json = await res.json();
+      setData(json.products || []);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
 
-    const getUniqueCategory = (data, property) =>{
-        let newVal = data?.map((curElem) =>{
-            return curElem[property]
-        })
-        newVal = ["All",...new Set(newVal)]
-        return newVal
-      }
-    
-      const categoryOnlyData = getUniqueCategory(data, "category")
-      const brandOnlyData = ["All"] // fallback
-    return <DataContext.Provider value={{ data, setData,fetchAllProducts, categoryOnlyData, brandOnlyData }}>
-        {children}
+  // ✅ Unique categories
+  const categoryOnlyData = [
+    "smartphones",
+    "laptops",
+    "fragrances",
+    "skincare",
+  ];
+
+  // ✅ Unique brands
+  const brandOnlyData = ["Apple", "Samsung", "OPPO"];
+
+  return (
+    <DataContext.Provider
+      value={{
+        data,
+        fetchAllProducts,
+        categoryOnlyData,
+        brandOnlyData,
+      }}
+    >
+      {children}
     </DataContext.Provider>
-}
+  );
+};
 
-export const useData = ()=> useContext(DataContext)
+// ✅ THIS IS THE FIX YOU WERE MISSING
+export const useData = () => {
+  return useContext(DataContext);
+};

@@ -6,7 +6,7 @@ import {
   SignedOut
 } from "@clerk/clerk-react";
 import { MapPin } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { CgClose } from "react-icons/cg";
 import { FaCaretDown } from "react-icons/fa";
 import { IoCartOutline } from "react-icons/io5";
@@ -14,132 +14,155 @@ import { Link, NavLink } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { HiMenuAlt1, HiMenuAlt3 } from "react-icons/hi";
 import ResponsiveMenu from "./ResponsiveMenu";
+import { motion } from "framer-motion";
 
-const Navbar = ({ location, getLocation, openDropdown, setOpenDropdown }) => {
+const Navbar = ({ location, getLocation }) => {
   const { cartItem } = useCart();
-  const [openNav, setOpenNav] = useState(false);
 
-  const toggleDropdown = () => {
-    setOpenDropdown(!openDropdown);
-  };
+  const [openNav, setOpenNav] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(false);
+
+  const toggleDropdown = useCallback(() => {
+    setOpenDropdown((prev) => !prev);
+  }, []);
+
   return (
-    <div className="bg-white py-3 shadow-2xl px-4 md:px-0">
-      <div className="max-w-6xl mx-auto flex justify-between items-center">
-        {/* logo section */}
-        <div className="flex gap-7 items-center">
-          <Link to={"/"}>
-            <h1 className="font-bold text-3xl">
+    <header className="sticky top-0 z-50 bg-white shadow-md">
+      <div className="max-w-6xl mx-auto flex justify-between items-center px-4 py-3">
+
+        {/* 🔵 LEFT */}
+        <div className="flex items-center gap-6">
+
+          {/* LOGO */}
+          <Link to="/">
+            <h1 className="font-bold text-2xl md:text-3xl tracking-wide">
               <span className="text-red-500 font-serif">S</span>hopsy
             </h1>
           </Link>
-          <div className="md:flex gap-1 cursor-pointer text-gray-700 items-center hidden">
-            <MapPin className="text-red-500" />
-            <span className="font-semibold ">
+
+          {/* LOCATION */}
+          <div className="hidden md:flex items-center gap-2 cursor-pointer text-gray-700 hover:text-black transition">
+            <MapPin className="text-red-500" size={20} />
+
+            <div className="text-sm leading-tight">
               {location ? (
-                <div className="-space-y-2">
-                  <p>{location.county}</p>
-                  <p>{location.state}</p>
-                </div>
+                <>
+                  <p className="font-semibold">{location.county}</p>
+                  <p className="text-xs text-gray-500">{location.state}</p>
+                </>
               ) : (
-                "Add Address"
+                <p className="font-medium">Add Address</p>
               )}
-            </span>
+            </div>
+
             <FaCaretDown onClick={toggleDropdown} />
           </div>
-          {openDropdown ? (
-            <div className="w-[250px] h-max shadow-2xl z-50 bg-white fixed top-16 left-60 border-2 p-5 border-gray-100 rounded-md">
-              <h1 className="font-semibold mb-4 text-xl flex justify-between">
-                Change Location{" "}
-                <span onClick={toggleDropdown}>
-                  <CgClose />
-                </span>
-              </h1>
+
+          {/* DROPDOWN */}
+          {openDropdown && (
+            <div className="absolute top-16 left-40 w-64 bg-white shadow-xl border rounded-xl p-4">
+              <div className="flex justify-between items-center mb-3">
+                <h2 className="font-semibold text-lg">Change Location</h2>
+                <CgClose onClick={toggleDropdown} className="cursor-pointer" />
+              </div>
+
               <button
                 onClick={getLocation}
-                className="bg-red-500 text-white px-3 py-1 rounded-md cursor-pointer hover:bg-red-400"
+                className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-400"
               >
                 Detect my location
               </button>
             </div>
-          ) : null}
-        </div>
-        {/* menu section */}
-        <nav className="flex gap-7 items-center">
-          <ul className="md:flex gap-7 items-center text-xl font-semibold hidden">
-            <NavLink
-              to={"/"}
-              className={({ isActive }) =>
-                `${isActive ? "border-b-3 transition-all border-red-500" : "text-black"} cursor-pointer`
-              }
-            >
-              <li>Home</li>
-            </NavLink>
-            <NavLink
-              to={"/products"}
-              className={({ isActive }) =>
-                `${isActive ? "border-b-3 transition-all border-red-500" : "text-black"} cursor-pointer`
-              }
-            >
-              <li>Products</li>
-            </NavLink>
-            <NavLink
-              to={"/about"}
-              className={({ isActive }) =>
-                `${isActive ? "border-b-3 transition-all border-red-500" : "text-black"} cursor-pointer`
-              }
-            >
-              <li>About</li>
-            </NavLink>
-            <NavLink
-              to={"/contact"}
-              className={({ isActive }) =>
-                `${isActive ? "border-b-3 transition-all border-red-500" : "text-black"} cursor-pointer`
-              }
-            >
-              <li>Contact</li>
-            </NavLink>
-          </ul>
-          <Link to={"/cart"} className="relative">
-            <IoCartOutline className="h-7 w-7" />
-            <span className="bg-red-500 px-2 rounded-full absolute -top-3 -right-3 text-white">
-              {cartItem.length}
-            </span>
-          </Link>
-          <div className="hidden md:block">
-            <SignedOut>
-  <SignInButton>
-    <button className="bg-red-500 text-white px-3 py-1 rounded-md">
-      Sign In
-    </button>
-  </SignInButton>
-
-  <SignUpButton>
-    <button className="border border-red-500 text-red-500 px-3 py-1 rounded-md">
-      Sign Up
-    </button>
-  </SignUpButton>
-</SignedOut>
-
-<SignedIn>
-  <UserButton />
-</SignedIn>
-          </div>
-          {openNav ? (
-            <HiMenuAlt3
-              onClick={() => setOpenNav(false)}
-              className="h-7 w-7 md:hidden"
-            />
-          ) : (
-            <HiMenuAlt1
-              onClick={() => setOpenNav(true)}
-              className="h-7 w-7 md:hidden"
-            />
           )}
+        </div>
+
+        {/* 🟢 RIGHT */}
+        <nav className="flex items-center gap-6">
+
+          {/* MENU */}
+          <ul className="hidden md:flex gap-6 items-center font-medium text-[16px]">
+            {["/", "/products", "/about", "/contact"].map((path, i) => {
+              const names = ["Home", "Products", "About", "Contact"];
+              return (
+                <NavLink
+                  key={path}
+                  to={path}
+                  className={({ isActive }) =>
+                    `relative pb-1 ${
+                      isActive
+                        ? "text-red-500 after:absolute after:left-0 after:bottom-0 after:w-full after:h-[2px] after:bg-red-500"
+                        : "hover:text-red-500"
+                    }`
+                  }
+                >
+                  {names[i]}
+                </NavLink>
+              );
+            })}
+          </ul>
+
+          {/* 🔥 CART ANIMATION */}
+          <Link to="/cart" className="relative">
+            <motion.div
+              whileTap={{ scale: 0.8 }}
+              animate={
+                cartItem.length > 0
+                  ? { y: [0, -6, 0] }
+                  : {}
+              }
+              transition={{ duration: 0.4 }}
+            >
+              <IoCartOutline className="h-7 w-7" />
+            </motion.div>
+
+            {cartItem.length > 0 && (
+              <motion.span
+                key={cartItem.length}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-[2px] rounded-full"
+              >
+                {cartItem.length}
+              </motion.span>
+            )}
+          </Link>
+
+          {/* AUTH */}
+          <div className="hidden md:flex items-center gap-3">
+            <SignedOut>
+              <SignInButton>
+                <button className="bg-red-500 text-white px-4 py-1.5 rounded-md">
+                  Sign In
+                </button>
+              </SignInButton>
+
+              <SignUpButton>
+                <button className="border border-red-500 text-red-500 px-4 py-1.5 rounded-md">
+                  Sign Up
+                </button>
+              </SignUpButton>
+            </SignedOut>
+
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+          </div>
+
+          {/* MOBILE MENU */}
+          <div className="md:hidden">
+            {openNav ? (
+              <HiMenuAlt3 onClick={() => setOpenNav(false)} />
+            ) : (
+              <HiMenuAlt1 onClick={() => setOpenNav(true)} />
+            )}
+          </div>
         </nav>
       </div>
+
+      {/* MOBILE MENU */}
       <ResponsiveMenu openNav={openNav} setOpenNav={setOpenNav} />
-    </div>
+    </header>
   );
 };
 
-export default Navbar;
+export default React.memo(Navbar);

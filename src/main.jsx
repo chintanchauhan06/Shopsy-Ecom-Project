@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
+import { WishlistProvider } from "./context/WishlistContext";
 
 import { ClerkProvider } from "@clerk/clerk-react"; // ✅ correct
 
@@ -18,8 +19,9 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
       <DataProvider>
+          <WishlistProvider>
         <CartProvider>
-          <App />
+            <App />
 
           <ScrollToTop
             color="white"
@@ -30,11 +32,12 @@ createRoot(document.getElementById("root")).render(
               alignItems: "center",
               justifyContent: "center",
             }}
-          />
+            />
 
           <ToastContainer position="bottom-right" />
         </CartProvider>
+            </WishlistProvider>
       </DataProvider>
     </ClerkProvider>
-  </StrictMode>
+  </StrictMode>,
 );

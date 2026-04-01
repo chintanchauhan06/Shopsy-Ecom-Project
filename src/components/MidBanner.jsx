@@ -1,20 +1,39 @@
-import React from 'react'
+import React from "react";
 import midbanner from "../assets/midbanner.jpg";
 
 const MidBanner = () => {
   return (
-    <div className='bg-gray-100 md:py-24'>
-      <div className='relative max-w-7xl mx-auto md:rounded-2xl pt-28 bg-cover bg-center h-[550px] md:h-[600px] ' style={{backgroundImage: `url(${midbanner})`, backgroundPosition:'center', backgroundAttachment: 'fixed'}}>
-        <div className='absolute inset-0 bg-black/60 md:rounded-2xl bg-opacity-50 flex items-center justify-center'>
-            <div className='text-center text-white px-4'>
-                <h1 className='text-3xl md:text-5xl lg:text-6xl font-bold mb-4'>Next-Gen Shopping at Your Fingertips</h1>
-                <p className='text-lg md:text-xl mb-6'>Discover the latest tech innovations with unbeatable prices and free shipping on all orders.</p>
-                <button className='bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 md:py-3 md:px-6 rounded-lg transition duration-300'>Shop Now</button>
-            </div>
+    <div className="max-w-7xl mx-auto px-4 my-14">
+
+      <div
+        className="relative h-[450px] md:h-[550px] rounded-2xl overflow-hidden shadow-lg"
+        style={{
+          backgroundImage: `url(${midbanner})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-center px-4">
+
+          <div className="text-white max-w-xl space-y-4">
+            <h1 className="text-3xl md:text-5xl font-bold">
+              Next-Gen Shopping Experience
+            </h1>
+
+            <p className="text-gray-300">
+              Discover premium products at unbeatable prices with fast delivery.
+            </p>
+
+            <button className="bg-red-500 px-6 py-2 rounded-lg hover:bg-red-400 transition">
+              Explore Now
+            </button>
+          </div>
+
         </div>
       </div>
-    </div>
-  )
-}
 
-export default MidBanner
+    </div>
+  );
+};
+
+export default MidBanner;
